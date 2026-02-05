@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> كم باقي على شهر رمضان </title>
+    <meta name="author"content="@kakashi">
+    <meta name="description"content="Ramadn and Eid countdown: Live updates on days,houre and minutes ">
+ <meta name ="keywords"content= ramadn,رمضان, >
+ <meta name = "robots" content="index,follow">
+ <style>
+        :root {
+            --bg-color: #0a0a0a;
+            /* أسود عميق */
+            --card-bg: #161616;
+            /* أسود فاتح قليلاً للبطاقة */
+            --primary-green: #27ae60;
+            --gold: #d6b035;
+            --text-white: #fcf9f9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            /* لمنع التمرير بسبب النجوم */
+            position: relative;
+        }
+
+        /* تأثير النجوم في الخلفية */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: -1;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 35px;
+            box-shadow: 0 0 30px rgba(39, 174, 96, 0.1);
+            /* توهج أخضر خفيف */
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid #333;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .target-name {
+            color: var(--primary-green);
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin: 10px 0 30px 0;
+            text-shadow: 0 0 10px rgba(39, 174, 96, 0.3);
+        }
+
+        .timer-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .time-box {
+            background: #222;
+            color: var(--text-white);
+            flex: 1;
+            padding: 20px 5px;
+            border-radius: 20px;
+            border-bottom: 4px solid var(--primary-green);
+            transition: transform 0.3s;
+        }
+
+        .time-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .number {
+            display: block;
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: 'monospace';
+            color: var(--text-white);
+        }
+
+        .label {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 5px;
+            display: block;
+        }
+
+        #seconds-box {
+            border-bottom-color: var(--gold);
+        }
+
+        #seconds-box .number {
+            color: var(--gold);
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="starField" class="stars"></canvas>
+
+    <div class="card">
+        <h1>الوقت المتبقي لـ</h1>
+        <div id="target" class="target-name">...</div>
+
+        <div class="timer-container">
+            <div class="time-box">
+                <span id="days" class="number">00</span>
+                <span class="label">يوم</span>
+            </div>
+            <div class="time-box">
+                <span id="hours" class="number">00</span>
+                <span class="label">ساعة</span>
+            </div>
+            <div class="time-box">
+                <span id="minutes" class="number">00</span>
+                <span class="label">دقيقة</span>
+            </div>
+            <div class="time-box" id="seconds-box">
+                <span id="seconds" class="number">00</span>
+                <span class="label">ثانية</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // كود النجوم المتحركة
+        const canvas = document.getElementById('starField');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const stars = [];
+
+        for (let i = 0; i < 150; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 1.5,
+                opacity: Math.random(),
+                speed: Math.random() * 0.02
+            });
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            stars.forEach(s => {
+                ctx.globalAlpha = Math.abs(Math.sin(s.opacity));
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+                s.opacity += s.speed;
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        // كود العداد الزمني
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const events = [
+                 { name: "شهر رمضان المبارك 🌙", date: new Date('February 18, 2026 00:00:00').getTime() },
+            { name: "شهر رمضان المبارك 🌙", date: new Date('February 18, 2026 00:00:00').getTime() },
+                { name: "عيد الفطر السعيد 🎉", date: new Date('March 20, 2026 00:00:00').getTime() },
+                { name: "عيد الأضحى المبارك 🐑", date: new Date('May 27, 2026 00:00:00').getTime() }
+            ];
+
+            let currentEvent = events.find(e => e.date > now) || { name: "رمضان 2027", date: new Date('February 7, 2027').getTime() };
+
+            const diff = currentEvent.date - now;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('target').innerText = currentEvent.name;
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
+            document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+
+</body>
+
+</html>
